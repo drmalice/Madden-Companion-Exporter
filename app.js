@@ -1,6 +1,5 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var admin = require("firebase-admin");
+const express = require('express');
+const admin = require('firebase-admin');
 
 const app = express();
 
@@ -15,35 +14,28 @@ admin.initializeApp({
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
 
-port = int(os.environ.get('PORT', 5000))
+pp.set('port', (process.env.PORT || 3001));
 
-// get user 
-app.get('/:user', function (req, res) {
-    return res.send("username is set to " + req.params.user);
+app.get('*', (req, res) => {
+    res.send('Madden Companion Exporter');
 });
-
-// delete user data
-app.get('/delete/:user', function (req, res) {
-    const db = admin.database();
-    const ref = db.ref();
-    const dataRef = ref.child(req.params.user);
-    dataRef.remove();
-    return res.send('Madden Data Cleared for ' + req.params.user);
-});
-
 
 app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
     let body = '';
-    req.on('data', chunk => { body += chunk.toString(); });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
     req.on('end', () => {
         const { leagueTeamInfoList: teams } = JSON.parse(body);
-        const { params: { username, leagueId } } = req;
+        const {params: { username, leagueId }} = req;
+
         teams.forEach(team => {
             const teamRef = ref.child(`data/${username}/${leagueId}/teams/${team.teamId}`);
             teamRef.update(team);
         });
+
         res.sendStatus(200);
     });
 });
@@ -57,13 +49,15 @@ app.post('/:username/:platform/:leagueId/standings', (req, res) => {
     });
     req.on('end', () => {
         const { teamStandingInfoList: teams } = JSON.parse(body);
-        const { params: { username, leagueId } } = req;
+        const {params: { username, leagueId }} = req;
+
         teams.forEach(team => {
             const teamRef = ref.child(
                 `data/${username}/${leagueId}/teams/${team.teamId}`
             );
             teamRef.update(team);
         });
+
         res.sendStatus(200);
     });
 });
@@ -72,7 +66,9 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-app.post('/:username/:platform/:leagueId/week/:weekType/:weekNumber/:dataType', (req, res) => {
+app.post(
+    '/:username/:platform/:leagueId/week/:weekType/:weekNumber/:dataType',
+    (req, res) => {
         const db = admin.database();
         const ref = db.ref();
         const {
@@ -88,7 +84,9 @@ app.post('/:username/:platform/:leagueId/week/:weekType/:weekNumber/:dataType', 
         req.on('end', () => {
             switch (dataType) {
                 case 'schedules': {
-                    const weekRef = ref.child(`${basePath}schedules/${weekType}/${weekNumber}`);
+                    const weekRef = ref.child(
+                        `${basePath}schedules/${weekType}/${weekNumber}`
+                    );
                     const { gameScheduleInfoList: schedules } = JSON.parse(body);
                     weekRef.update(schedules);
                     break;
@@ -127,37 +125,45 @@ app.post('/:username/:platform/:leagueId/week/:weekType/:weekNumber/:dataType', 
                     break;
                 }
             }
-            res.sendStatus(202);
+
+            res.sendStatus(200);
         });
-    });
-// Free Agents
+    }
+);
+
+// ROSTERS
 app.post('/:username/:platform/:leagueId/freeagents/roster', (req, res) => {
-    const db = admin.database();
-    const ref = db.ref();
-    const { params: { username, leagueId, teamId } } = req;
-    let body = '';
-    req.on('data', chunk => { body += chunk.toString(); });
-    req.on('end', () => {
-        const dataRef = ref.child(`${username}/data/${leagueId}/freeagents/rosterInfoList`);
-        const { rosterInfoList: players } = JSON.parse(body);
-        dataRef.update(players);
-        res.sendStatus(200);
-    });
+    res.sendStatus(200);
 });
 
-// Team Rosters
 app.post('/:username/:platform/:leagueId/team/:teamId/roster', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
-    const { params: { username, leagueId, teamId } } = req;
+    const {
+        params: { username, leagueId, teamId }
+    } = req;
     let body = '';
-    req.on('data', chunk => { body += chunk.toString(); });
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
     req.on('end', () => {
-        const dataRef = ref.child(`${username}/data/${leagueId}/team/${teamId}/rosterInfoList`);
-        const { rosterInfoList: players } = JSON.parse(body);
-        dataRef.update(players);    
+        const { rosterInfoList } = JSON.parse(body);
+        const dataRef = ref.child(
+            `data/${username}/${leagueId}/teams/${teamId}/roster`
+        );
+        const players = {};
+        rosterInfoList.forEach(player => {
+            players[player.rosterId] = player;
+        });
+        dataRef.set(players, error => {
+            if (error) {
+                console.log('Data could not be saved.' + error);
+            } else {
+                console.log('Data saved successfully.');
+            }
+        });
         res.sendStatus(200);
-    });        
+    });
 });
 
 app.listen(app.get('port'), () =>
