@@ -14,7 +14,7 @@ admin.initializeApp({
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
 
-pp.set('port', (process.env.PORT || 3001));
+app.set('port', (process.env.PORT || 3001));
 
 app.get('*', (req, res) => {
     res.send('Madden Companion Exporter');
