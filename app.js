@@ -11,8 +11,9 @@ const serviceAccount = require("./maddencfm-33e39-firebase-adminsdk-xz9w5-422a99
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://maddencfm-33e39.firebaseio.com"
+    databaseURL: "https://maddencfm-33e39.firebaseio.com/"
 });
+
 app.set('port', (process.env.PORT || 5000));
 
 // get user 
