@@ -13,7 +13,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
-app.set('port', (process.env.PORT || 3001));
+app.set('port', (process.env.PORT || 5000));
 
 app.get('*', (req, res) => {
     res.send('Madden Companion Exporter');
