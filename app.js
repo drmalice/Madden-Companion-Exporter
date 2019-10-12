@@ -20,6 +20,16 @@ app.get('*', (req, res) => {
     res.send('Madden Companion Exporter');
 });
 
+
+// delete user data
+app.get('/delete/:user', function(req, res) {
+    const db = admin.database();
+    const ref = db.ref();
+    const dataRef = ref.child(req.params.user);
+    dataRef.remove();
+    return res.send('Madden Data Cleared for ' + req.params.user);
+});
+
 app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
