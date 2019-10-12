@@ -30,6 +30,7 @@ app.get('/delete/:user', function(req, res) {
     return res.send('Madden Data Cleared for ' + req.params.user);
 });
 
+// league teams
 app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
@@ -39,17 +40,16 @@ app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
     });
     req.on('end', () => {
         const { leagueTeamInfoList: teams } = JSON.parse(body);
-        const {params: { username, leagueId }} = req;
+        const { params: { username, leagueId } } = req;
 
-        teams.forEach(team => {
-            const teamRef = ref.child(`data/${username}/${leagueId}/teams/${team.teamId}`);
-            teamRef.update(team);
-        });
-
+        const teamRef = ref.child(`${username}/data/team/leagueTeamInfoList`);
+        teamRef.update(teams);
+        
         res.sendStatus(200);
     });
 });
 
+// standings
 app.post('/:username/:platform/:leagueId/standings', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
@@ -61,12 +61,8 @@ app.post('/:username/:platform/:leagueId/standings', (req, res) => {
         const { teamStandingInfoList: teams } = JSON.parse(body);
         const {params: { username, leagueId }} = req;
 
-        teams.forEach(team => {
-            const teamRef = ref.child(
-                `data/${username}/${leagueId}/teams/${team.teamId}`
-            );
-            teamRef.update(team);
-        });
+        const teamRef = ref.child(`${username}/data/standings/teamStandingInfoList`);
+        teamRef.update(teams);
 
         res.sendStatus(200);
     });
