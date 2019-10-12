@@ -73,7 +73,7 @@ function capitalizeFirstLetter(string) {
 }
 
 app.post(
-    '/:username/:platform/:leagueId/week/:weekType/:weekNumber/:dataType',
+    '/:platform/:leagueId/week/:weekType/:weekNumber/:dataType',
     (req, res) => {
         const db = admin.database();
         const ref = db.ref();
