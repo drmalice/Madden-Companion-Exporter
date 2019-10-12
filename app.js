@@ -13,11 +13,20 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
-app.set('port', (process.env.PORT || 32603));
+app.set('port', (process.env.PORT || 5000));
 
 // get user 
 app.get('/:user', function(req, res) {
     return res.send("username is set to " + req.params.user);
+});
+
+// delete user data
+app.get('/delete/:user', function(req, res) {
+    const db = admin.database();
+    const ref = db.ref();
+    const dataRef = ref.child(req.params.user);
+    dataRef.remove();
+    return res.send('Madden Data Cleared for ' + req.params.user);
 });
 
 app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
