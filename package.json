@@ -1,6 +1,6 @@
 {
   "name": "madden_companion_exporter",
-  "version": "10.16.3",
+  "version": "1.0.0",
   "description": "Gets data from the companion app",
   "main": "app.js",
   "scripts": {
