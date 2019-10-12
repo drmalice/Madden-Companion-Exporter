@@ -137,6 +137,24 @@ app.post(
     }
 );
 
+// free agents
+app.post('/:platform/:leagueId/freeagents/roster', (req, res) => {
+    const db = admin.database();
+    const ref = db.ref();
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        const { rosterInfoList: teams } = JSON.parse(body);
+        const { params: { username } } = req;
+        const teamRef = ref.child(`${username}/data/freeagents/rosterInfoList`);
+        teamRef.update(teams);
+
+        res.sendStatus(200);
+    });       
+});
+
 // ROSTERS
 app.post('/:platform/:leagueId/freeagents/roster', (req, res) => {
     res.sendStatus(200);
