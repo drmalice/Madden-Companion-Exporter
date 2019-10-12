@@ -13,21 +13,10 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
+app.set('port', (process.env.PORT || 3001));
 
-app.set('port', (process.env.PORT || 5000));
-
-app.get('/:user', function(req, res) {
-    return res.send("username is set to " + req.params.user);
-});
-
-
-// delete user data
-app.get('/delete/:user', function(req, res) {
-    const db = admin.database();
-    const ref = db.ref();
-    const dataRef = ref.child(req.params.user);
-    dataRef.remove();
-    return res.send('Madden Data Cleared for ' + req.params.user);
+app.get('*', (req, res) => {
+    res.send('Madden Companion Exporter');
 });
 
 app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
@@ -50,7 +39,6 @@ app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
     });
 });
 
-// standings
 app.post('/:username/:platform/:leagueId/standings', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
@@ -62,8 +50,12 @@ app.post('/:username/:platform/:leagueId/standings', (req, res) => {
         const { teamStandingInfoList: teams } = JSON.parse(body);
         const {params: { username, leagueId }} = req;
 
-        const teamRef = ref.child(`${username}/data/standings/teamStandingInfoList`);
-        teamRef.update(teams);
+        teams.forEach(team => {
+            const teamRef = ref.child(
+                `data/${username}/${leagueId}/teams/${team.teamId}`
+            );
+            teamRef.update(team);
+        });
 
         res.sendStatus(200);
     });
