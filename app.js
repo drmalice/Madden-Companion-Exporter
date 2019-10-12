@@ -138,11 +138,11 @@ app.post(
 );
 
 // ROSTERS
-app.post('/:username/:platform/:leagueId/freeagents/roster', (req, res) => {
+app.post('/:platform/:leagueId/freeagents/roster', (req, res) => {
     res.sendStatus(200);
 });
 
-app.post('/:username/:platform/:leagueId/team/:teamId/roster', (req, res) => {
+app.post('/:platform/:leagueId/team/:teamId/roster', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
     const {
