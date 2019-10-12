@@ -31,7 +31,7 @@ app.get('/delete/:user', function(req, res) {
 });
 
 // league teams
-app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
+app.post('/:platform/:leagueId/leagueteams', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
     let body = '';
@@ -50,7 +50,7 @@ app.post('/:username/:platform/:leagueId/leagueteams', (req, res) => {
 });
 
 // standings
-app.post('/:username/:platform/:leagueId/standings', (req, res) => {
+app.post('/:platform/:leagueId/standings', (req, res) => {
     const db = admin.database();
     const ref = db.ref();
     let body = '';
