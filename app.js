@@ -17,7 +17,7 @@ admin.initializeApp({
 app.set('port', (process.env.PORT || 5000));
 
 // get user 
-aapp.get('*', (req, res) => {
+app.get('*', (req, res) => {
     res.send('Madden Companion Exporter');
 });
 
