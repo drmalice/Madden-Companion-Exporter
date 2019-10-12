@@ -13,7 +13,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://maddencfm-33e39.firebaseio.com"
 });
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 32603));
 
 // get user 
 app.get('/:user', function(req, res) {
